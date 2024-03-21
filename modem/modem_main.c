@@ -52,6 +52,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <sys/sysmacros.h>
 #include <sys/mman.h>
 #include <sched.h>
 #include <signal.h>
@@ -363,6 +364,7 @@ static int setup_stream(snd_pcm_t *handle, struct modem *m, const char *stream_n
 		return err;
 	}
 	rrate = rate = m->srate;
+	ERR("setting sample rate to %d\n", rate);
 	err = snd_pcm_hw_params_set_rate_near(handle, hw_params, &rrate, 0);
 	if (err < 0) {
 		ERR("cannot set rate for %s: %s\n", stream_name, snd_strerror(err));
@@ -475,9 +477,14 @@ static int alsa_start (struct modem *m)
 	err = snd_pcm_link(dev->chandle, dev->phandle);
 	if(err < 0) {
 		ERR("snd_pcm_link error: %s\n", snd_strerror(err));
-		return err;
+		//return err;
 	}
 	err = snd_pcm_start(dev->chandle);
+	if(err < 0) {
+		ERR("snd_pcm_start error: %s\n", snd_strerror(err));
+		return err;
+	}
+	err = snd_pcm_start(dev->phandle);
 	if(err < 0) {
 		ERR("snd_pcm_start error: %s\n", snd_strerror(err));
 		return err;

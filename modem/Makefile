@@ -18,7 +18,7 @@ ARCH64:=$(shell uname -m | sed -e '/amd64/s//x86_64/' | grep -c x86_64)
 ifeq ($(ARCH64), 0)
 CC:= gcc
 else
-# SUPPORT_ALSA:=1
+SUPPORT_ALSA:=1
 CC:= gcc -m32
 endif
 

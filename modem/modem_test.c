@@ -103,7 +103,7 @@ static char outbuf[4096];
 static int modem_test_start (struct modem *m)
 {
 	struct modem_test *t = m->dev_data;
-	DBG("modem_test_start...\n");
+	ERR("modem_test_start... srate=%d\n", m->srate);
 	t->delay = 256;
 	t->started = 1;
 	memset(outbuf,0,t->delay);
@@ -132,7 +132,10 @@ static int modem_test_ioctl(struct modem *m, unsigned int cmd, unsigned long arg
         case MDMCTL_SPEED:
                 return 0;
         case MDMCTL_GETFMTS:
+				ERR("modem_test_ioctl MDMCTL_GETFMTS\n");
+				return 0;
         case MDMCTL_SETFMT:
+				ERR("modem_test_ioctl MDMCTL_SETFMTS\n");
                 return 0;
         case MDMCTL_SETFRAGMENT:
                 return 0;
@@ -307,6 +310,7 @@ static int modem_test_run(struct modem_test *modems)
 			}
 		}
 
+		usleep(10000);
 		for( t = modems ; t->modem ; t++ ) {
 			int pty = t->modem->pty;
 			if(FD_ISSET(pty,&rset)) {
